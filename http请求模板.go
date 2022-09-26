@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-var Client = Init("") //在这里设置代理 不设置就 传入空字符串  设置就传入代理地址
+var Client = Init("http://127.0.0.1:7890") //在这里设置代理 不设置就 传入空字符串  设置就传入代理地址
 
 func Init(proxy_ip string) *http.Client {
 	//初始化
@@ -50,23 +50,9 @@ func Get_Text(link_url string, head map[string]string) (string, error) {
 		req.Header.Set(key, val)
 	}
 
-	resp, err := Client.Do(req) //设置完毕后 发出网络请求
+	body, err := req_send(req)
 	if err != nil {
-		fmt.Printf("err TextGet1: %v\n", err)
-		return "", errors.New("网络请求失败")
-	}
-
-	if resp.StatusCode != 200 { //如果状态码错误 就打印错误 并且返回空
-		fmt.Printf("resp.StatusCode: %v\n", resp.StatusCode)
-		return "", errors.New("状态码异常")
-	}
-
-	defer resp.Body.Close()                 //关闭连接
-	body, err2 := ioutil.ReadAll(resp.Body) //将获取到的数据使用 ioutil.ReadAll 函数 转化一下
-	if err2 != nil {
-		fmt.Printf("err TextGet2: %v body %v\n", err2)
-		return "", errors.New("数据转换为字符串错误 一般是返回的数据是压缩的 需要在请求头里面设置接口明码返回")
-		//	设置接口明码返回  head["Accept-Encoding"] = "identity"
+		return "", err
 	}
 
 	return string(body), nil //将数据转换为字符串类型 并且作为函数的返回值
@@ -83,22 +69,11 @@ func Get_Byte(link_url string, head map[string]string) ([]byte, error) {
 		req.Header.Set(key, val)
 	}
 
-	resp, err := Client.Do(req) //设置完毕后 发出网络请求
+	body, err := req_send(req)
 	if err != nil {
-		fmt.Printf("err TextGet1: %v\n", err)
-		return body, errors.New("网络请求失败")
+		return body, err
 	}
 
-	if resp.StatusCode != 200 { //如果状态码错误 就打印错误 并且返回空
-		fmt.Printf("resp.StatusCode: %v\n", resp.StatusCode)
-		return body, errors.New("状态码异常")
-	}
-	defer resp.Body.Close()               //关闭连接
-	body, err = ioutil.ReadAll(resp.Body) //将获取到的数据使用 ioutil.ReadAll 函数 转化一下
-	if err != nil {
-		fmt.Printf("err ByteGet2: %v\n", err)
-		return nil, errors.New("数据转换错误")
-	}
 	return body, nil // 并且作为函数的返回值
 }
 
@@ -114,23 +89,9 @@ func Get_Json(link_url string, head map[string]string) (map[string]interface{}, 
 		req.Header.Set(key, val)
 	}
 
-	resp, err := Client.Do(req) //设置完毕后 发出网络请求
+	body, err := req_send(req)
 	if err != nil {
-		fmt.Printf("err TextGet1: %v\n", err)
-		return r, errors.New("网络请求失败")
-	}
-
-	if resp.StatusCode != 200 { //如果状态码错误 就打印错误 并且返回空
-		fmt.Printf("resp.StatusCode: %v\n", resp.StatusCode)
-		return r, errors.New("状态码异常")
-	}
-
-	defer resp.Body.Close()                //关闭连接
-	body, err := ioutil.ReadAll(resp.Body) //将获取到的数据使用 ioutil.ReadAll 函数 转化一下
-	if err != nil {
-		fmt.Printf("err TextGet2: %v body %v\n", err)
-		return r, errors.New("数据转换为字符串错误 一般是返回的数据是压缩的 需要在请求头里面设置接口明码返回")
-		//	设置接口明码返回  head["Accept-Encoding"] = "identity"
+		return r, err
 	}
 
 	r = make(map[string]interface{})
@@ -159,23 +120,9 @@ func Post_From_Text(link_url string, head, data map[string]string) (string, erro
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded") //通过设置请求头参数 让数据变成表单form类型进行提交  默认的提交的是data
 
-	resp, err := Client.Do(req) //设置完毕后 发出网络请求
+	body, err := req_send(req)
 	if err != nil {
-		fmt.Printf("err TextGet1: %v\n", err)
-		return "", errors.New("网络请求失败")
-	}
-
-	if resp.StatusCode != 200 { //如果状态码错误 就打印错误 并且返回空
-		fmt.Printf("resp.StatusCode: %v\n", resp.StatusCode)
-		return "", errors.New("状态码异常")
-	}
-
-	defer resp.Body.Close()                 //关闭连接
-	body, err2 := ioutil.ReadAll(resp.Body) //将获取到的数据使用 ioutil.ReadAll 函数 转化一下
-	if err2 != nil {
-		fmt.Printf("err TextGet2: %v body %v\n", err2)
-		return "", errors.New("数据转换为字符串错误 一般是返回的数据是压缩的 需要在请求头里面设置接口明码返回")
-		//	设置接口明码返回  head["Accept-Encoding"] = "identity"
+		return "", err
 	}
 
 	return string(body), nil //将数据转换为字符串类型 并且作为函数的返回值
@@ -201,26 +148,11 @@ func Post_From_Json(link_url string, head, data map[string]string) (map[string]i
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded") //通过设置请求头参数 让数据变成表单form类型进行提交  默认的提交的是data
 
-	resp, err := Client.Do(req) //设置完毕后 发出网络请求
+	body, err := req_send(req)
 	if err != nil {
-		fmt.Printf("err TextGet1: %v\n", err)
-		return r, errors.New("网络请求失败")
+		return r, err
 	}
 
-	if resp.StatusCode != 200 { //如果状态码错误 就打印错误 并且返回空
-		fmt.Printf("resp.StatusCode: %v\n", resp.StatusCode)
-		return r, errors.New("状态码异常")
-	}
-
-	defer resp.Body.Close()                 //关闭连接
-	body, err2 := ioutil.ReadAll(resp.Body) //将获取到的数据使用 ioutil.ReadAll 函数 转化一下
-	if err2 != nil {
-		fmt.Printf("err TextGet2: %v body %v\n", err2)
-		return r, errors.New("数据转换为字符串错误 一般是返回的数据是压缩的 需要在请求头里面设置接口明码返回")
-		//	设置接口明码返回  head["Accept-Encoding"] = "identity"
-	}
-
-	r = make(map[string]interface{})
 	err = json.Unmarshal([]byte(body), &r)
 	if err != nil {
 		fmt.Printf("err TextGet2: %v body %v\n", err)
@@ -248,23 +180,9 @@ func Post_From_Byte(link_url string, head, data map[string]string) ([]byte, erro
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded") //通过设置请求头参数 让数据变成表单form类型进行提交  默认的提交的是data
 
-	resp, err := Client.Do(req) //设置完毕后 发出网络请求
+	body, err := req_send(req)
 	if err != nil {
-		fmt.Printf("err TextGet1: %v\n", err)
-		return body, errors.New("网络请求失败")
-	}
-
-	if resp.StatusCode != 200 { //如果状态码错误 就打印错误 并且返回空
-		fmt.Printf("resp.StatusCode: %v\n", resp.StatusCode)
-		return body, errors.New("状态码异常")
-	}
-
-	defer resp.Body.Close()                 //关闭连接
-	body, err2 := ioutil.ReadAll(resp.Body) //将获取到的数据使用 ioutil.ReadAll 函数 转化一下
-	if err2 != nil {
-		fmt.Printf("err TextGet2: %v body %v\n", err2)
-		return body, errors.New("数据转换为字符串错误 一般是返回的数据是压缩的 需要在请求头里面设置接口明码返回")
-		//	设置接口明码返回  head["Accept-Encoding"] = "identity"
+		return body, err
 	}
 
 	return body, nil //将数据转换为字符串类型 并且作为函数的返回值
@@ -287,23 +205,9 @@ func Post_Json_Text(link_url string, head, data map[string]string) (string, erro
 		req.Header.Set(key, val)
 	}
 
-	resp, err := Client.Do(req) //设置完毕后 发出网络请求
+	body, err := req_send(req)
 	if err != nil {
-		fmt.Printf("err TextGet1: %v\n", err)
-		return "", errors.New("网络请求失败")
-	}
-
-	if resp.StatusCode != 200 { //如果状态码错误 就打印错误 并且返回空
-		fmt.Printf("resp.StatusCode: %v\n", resp.StatusCode)
-		return "", errors.New("状态码异常")
-	}
-
-	defer resp.Body.Close()                 //关闭连接
-	body, err2 := ioutil.ReadAll(resp.Body) //将获取到的数据使用 ioutil.ReadAll 函数 转化一下
-	if err2 != nil {
-		fmt.Printf("err TextGet2: %v body %v\n", err2)
-		return "", errors.New("数据转换为字符串错误 一般是返回的数据是压缩的 需要在请求头里面设置接口明码返回")
-		//	设置接口明码返回  head["Accept-Encoding"] = "identity"
+		return "", err
 	}
 
 	return string(body), nil //将数据转换为字符串类型 并且作为函数的返回值
@@ -329,26 +233,11 @@ func Post_Json_Json(link_url string, head, data map[string]string) (map[string]i
 		req.Header.Set(key, val)
 	}
 
-	resp, err := Client.Do(req) //设置完毕后 发出网络请求
+	body, err := req_send(req)
 	if err != nil {
-		fmt.Printf("err TextGet1: %v\n", err)
-		return r, errors.New("网络请求失败")
+		return r, err
 	}
 
-	if resp.StatusCode != 200 { //如果状态码错误 就打印错误 并且返回空
-		fmt.Printf("resp.StatusCode: %v\n", resp.StatusCode)
-		return r, errors.New("状态码异常")
-	}
-
-	defer resp.Body.Close()                 //关闭连接
-	body, err2 := ioutil.ReadAll(resp.Body) //将获取到的数据使用 ioutil.ReadAll 函数 转化一下
-	if err2 != nil {
-		fmt.Printf("err TextGet2: %v body %v\n", err2)
-		return r, errors.New("数据转换为字符串错误 一般是返回的数据是压缩的 需要在请求头里面设置接口明码返回")
-		//	设置接口明码返回  head["Accept-Encoding"] = "identity"
-	}
-
-	r = make(map[string]interface{})
 	err = json.Unmarshal([]byte(body), &r)
 	if err != nil {
 		fmt.Printf("err TextGet2: %v body %v\n", err)
@@ -376,21 +265,35 @@ func Post_Json_Byte(link_url string, head, data map[string]string) ([]byte, erro
 		req.Header.Set(key, val)
 	}
 
+	body, err = req_send(req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, nil
+
+}
+
+//请求函数复用 封装
+func req_send(req *http.Request) ([]byte, error) {
+
+	var body []byte
+
 	resp, err := Client.Do(req) //设置完毕后 发出网络请求
 	if err != nil {
-		fmt.Printf("err TextGet1: %v\n", err)
+		fmt.Printf("网络请求失败: %v\n", err)
 		return body, errors.New("网络请求失败")
 	}
 
 	if resp.StatusCode != 200 { //如果状态码错误 就打印错误 并且返回空
-		fmt.Printf("resp.StatusCode: %v\n", resp.StatusCode)
+		fmt.Printf("状态码错误: %v\n", resp.StatusCode)
 		return body, errors.New("状态码异常")
 	}
 
-	defer resp.Body.Close()                 //关闭连接
-	body, err2 := ioutil.ReadAll(resp.Body) //将获取到的数据使用 ioutil.ReadAll 函数 转化一下
-	if err2 != nil {
-		fmt.Printf("err TextGet2: %v body %v\n", err2)
+	defer resp.Body.Close()               //关闭连接
+	body, err = ioutil.ReadAll(resp.Body) //将获取到的数据使用 ioutil.ReadAll 函数 转化一下
+	if err != nil {
+		fmt.Printf("数据转换错误: %v body %v\n", err)
 		return body, errors.New("数据转换为字符串错误 一般是返回的数据是压缩的 需要在请求头里面设置接口明码返回")
 		//	设置接口明码返回  head["Accept-Encoding"] = "identity"
 	}
@@ -409,18 +312,21 @@ func http_get() {
 	head["accept"] = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
 	head["accept-language"] = "zh-CN,zh;q=0.9,ja;q=0.8"
 	head["upgrade-insecure-requests"] = "1"
+	head["Accept-Encoding"] = "identity"
 
-	// s, err := TextGet("https://www.tokyomotion.net/user/yutong/videos", head) //请求普通的html网页
+	// s, err := Get_Text("https://www.tokyomotion.net/user/yutong/videos", head) //请求普通的html网页
 
-	// s, err := ByteGet("https://cdn.tokyo-motion.net/img/webapp-icon.png", head) //下载文件
+	// s, err := Get_Byte("https://cdn.tokyo-motion.net/img/webapp-icon.png", head) //下载文件
+	// fmt.Printf("val: %v\n", s)
+	// fmt.Printf("err: %v\n", err)
 
-	s, _ := JsonGet("http://api.jktab.xyz/up_info/list/?Page=1&pageSize=155", head) //请求json数据
-	test := s["data"].([]interface{})                                               //转换为可以遍历的数组
-	for _, val := range test {
-		m := val.(map[string]interface{}) //转换为可以提取的map
-		fmt.Printf("val: %v\n", m)
-		fmt.Printf("val: %v\n", m["name"])
-	}
+	// s, _ := Get_Json("http://api.jktab.xyz/up_info/list/?Page=1&pageSize=155", head) //请求json数据
+	// test := s["data"].([]interface{})                                                //转换为可以遍历的数组
+	// for _, val := range test {
+	// 	m := val.(map[string]interface{}) //转换为可以提取的map
+	// 	fmt.Printf("val: %v\n", m)
+	// 	fmt.Printf("val: %v\n", m["name"])
+	// }
 
 }
 
@@ -441,17 +347,20 @@ func http_post() {
 	data["name"] = "海虎"
 	data["age"] = "48"
 
-	// s, err := TextPost(link, head, data)   //提交form表单 返回字符串类型
-	// m, err := JsonPost(link, head, data) //提交form表单 返回json类型
-	//f, err :=  BytePost(link, head, data)              //提交form表单 数据流 用于下载文件
+	// s, err := Post_From_Text(link, head, data) //提交form表单 返回字符串类型
+	// s, err := Post_From_Json(link, head, data) //提交form表单 返回json类型
+	// s, err := Post_From_Byte(link, head, data) //提交form表单 数据流 用于下载文件
 
-	// s, err := Post_Json_Text(link, head, data)    //提交json数据 返回字符串类型
-	// m, err := Post_Json_Json(link, head, data) //提交json数据 返回json数据
-	// Post_Json_Byte(link, head, data) //提交json数据 返回数据流 用于下载文件
+	// s, err := Post_Json_Text(link, head, data) //提交json数据 返回字符串类型
+	// s, err := Post_Json_Json(link, head, data) //提交json数据 返回json数据
+	// s, err := Post_Json_Byte(link, head, data) //提交json数据 返回数据流 用于下载文件
+
+	// fmt.Println(s)
+	// fmt.Println(err)
 
 }
 
 func main() {
-	// http_get()
+	http_get()
 	http_post()
 }
