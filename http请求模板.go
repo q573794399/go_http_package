@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-var Client = Init("http://127.0.0.1:7890") //在这里设置代理 不设置就 传入空字符串  设置就传入代理地址
+var Client = Init("") //在这里设置代理 不设置就 传入空字符串  设置就传入代理地址
 
 func Init(proxy_ip string) *http.Client {
 	//初始化
@@ -41,7 +41,7 @@ func Init(proxy_ip string) *http.Client {
 }
 
 //普通get请求 返回字符串  用于爬取网页
-func TextGet(link_url string, head map[string]string) (string, error) {
+func Get_Text(link_url string, head map[string]string) (string, error) {
 	//普通get请求
 	req, _ := http.NewRequest("GET", link_url, nil) //配置本次请求的方式和url
 
@@ -73,7 +73,7 @@ func TextGet(link_url string, head map[string]string) (string, error) {
 }
 
 //普通get请求 返回数据流 用于下载文件
-func ByteGet(link_url string, head map[string]string) ([]byte, error) {
+func Get_Byte(link_url string, head map[string]string) ([]byte, error) {
 	//普通get请求 返回数据流 用于下载文件
 	req, _ := http.NewRequest("GET", link_url, nil) //配置本次请求的方式和url
 	var body []byte
@@ -103,7 +103,7 @@ func ByteGet(link_url string, head map[string]string) ([]byte, error) {
 }
 
 //普通get请求 返回json数据
-func JsonGet(link_url string, head map[string]string) (map[string]interface{}, error) {
+func Get_Json(link_url string, head map[string]string) (map[string]interface{}, error) {
 	//普通get请求 返回json数据
 	req, _ := http.NewRequest("GET", link_url, nil) //配置本次请求的方式和url
 	var r map[string]interface{}
@@ -144,7 +144,7 @@ func JsonGet(link_url string, head map[string]string) (map[string]interface{}, e
 }
 
 //普通的post 请求 返回网页
-func TextPost(link_url string, head, data map[string]string) (string, error) {
+func Post_From_Text(link_url string, head, data map[string]string) (string, error) {
 
 	urlValues := url.Values{}    //创建提交参数表单
 	for key, val := range data { //遍历map
@@ -183,7 +183,7 @@ func TextPost(link_url string, head, data map[string]string) (string, error) {
 }
 
 //普通的post请求 返回json
-func JsonPost(link_url string, head, data map[string]string) (map[string]interface{}, error) {
+func Post_From_Json(link_url string, head, data map[string]string) (map[string]interface{}, error) {
 
 	var r map[string]interface{}
 	r = make(map[string]interface{})
@@ -232,7 +232,7 @@ func JsonPost(link_url string, head, data map[string]string) (map[string]interfa
 }
 
 //普通的post请求 返回数据流 用于下载文件
-func BytePost(link_url string, head, data map[string]string) ([]byte, error) {
+func Post_From_Byte(link_url string, head, data map[string]string) ([]byte, error) {
 	var body []byte
 
 	urlValues := url.Values{}    //创建提交参数表单
@@ -441,7 +441,6 @@ func http_post() {
 	data["name"] = "海虎"
 	data["age"] = "48"
 
-
 	// s, err := TextPost(link, head, data)   //提交form表单 返回字符串类型
 	// m, err := JsonPost(link, head, data) //提交form表单 返回json类型
 	//f, err :=  BytePost(link, head, data)              //提交form表单 数据流 用于下载文件
@@ -454,7 +453,5 @@ func http_post() {
 
 func main() {
 	// http_get()
-
 	http_post()
-
 }
