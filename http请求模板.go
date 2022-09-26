@@ -12,6 +12,7 @@ import (
 	"time"
 )
 
+// var Client = Init("") //在这里设置代理 不设置就 传入空字符串  设置就传入代理地址
 var Client = Init("http://127.0.0.1:7890") //在这里设置代理 不设置就 传入空字符串  设置就传入代理地址
 
 func Init(proxy_ip string) *http.Client {
@@ -303,7 +304,7 @@ func req_send(req *http.Request) ([]byte, error) {
 }
 
 //get请求示例
-func http_get() {
+func demo_http_get() {
 	//get请求示例
 	head := make(map[string]string, 0)
 	head["Accept-Encoding"] = "identity"
@@ -314,13 +315,10 @@ func http_get() {
 	head["upgrade-insecure-requests"] = "1"
 	head["Accept-Encoding"] = "identity"
 
-	// s, err := Get_Text("https://www.tokyomotion.net/user/yutong/videos", head) //请求普通的html网页
+	// s, err := Get_Text("https://www.tokyomotion.net/user/yutong/videos", head)         //请求普通的html网页
+	// m, err := Get_Byte("https://cdn.tokyo-motion.net/img/webapp-icon.png", head)       //下载文件
+	// c, err := Get_Json("http://api.jktab.xyz/up_info/list/?Page=1&pageSize=155", head) //请求json数据
 
-	// s, err := Get_Byte("https://cdn.tokyo-motion.net/img/webapp-icon.png", head) //下载文件
-	// fmt.Printf("val: %v\n", s)
-	// fmt.Printf("err: %v\n", err)
-
-	// s, _ := Get_Json("http://api.jktab.xyz/up_info/list/?Page=1&pageSize=155", head) //请求json数据
 	// test := s["data"].([]interface{})                                                //转换为可以遍历的数组
 	// for _, val := range test {
 	// 	m := val.(map[string]interface{}) //转换为可以提取的map
@@ -331,7 +329,7 @@ func http_get() {
 }
 
 //post请求示例
-func http_post() {
+func demo_http_post() {
 	// link := "http://httpbin.org/post"
 	// link := "http://127.0.0.1:5000/post"
 
@@ -360,7 +358,7 @@ func http_post() {
 
 }
 
-func main() {
-	http_get()
-	http_post()
-}
+// func main() {
+// 	demo_http_get()
+// 	demo_http_post()
+// }
